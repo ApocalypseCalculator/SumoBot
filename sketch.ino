@@ -2,34 +2,80 @@ const int leftForward = 8;
 const int leftBackward = 9;
 const int rightForward = 10;
 const int rightBackward = 11;
-const int sensor_trig = 3;
-const int sensor_echo = 2;
-void setup()
-{
+
+const int trigPin = 3;
+const int echoPin = 2;
+
+void setup() {
+  Serial.begin(9600);
+  // motor
   pinMode(leftForward, OUTPUT);
   pinMode(leftBackward, OUTPUT);
   pinMode(rightForward, OUTPUT);
   pinMode(rightBackward, OUTPUT);
-  pinMode(LED_BUILTIN, OUTPUT);
-  pinMode(sensor_trig, OUTPUT); // trig
-  pinMode(sensor_echo, INPUT);
-  Serial.begin(9600);
-  Serial.print("BEGIN");
+  // sensor
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
 }
-void loop()
-{
-  digitalWrite(leftForward, HIGH);
-  digitalWrite(leftBackward, LOW);
-  digitalWrite(rightForward, HIGH);
-  digitalWrite(rightBackward, LOW);
-  digitalWrite(LED_BUILTIN, HIGH);
-  digitalWrite(sensor_trig, HIGH);
+
+int sense() {
+  digitalWrite(tr, HIGH);
   delayMicroseconds(10);
-  digitalWrite(sensor_trig, LOW);
-  float duration_us = pulseIn(sensor_echo, HIGH);
+  digitalWrite(3, LOW);
+
+  float duration_us = pulseIn(2, HIGH);
+
+  // calculate the distance
   float distance_cm = 0.017 * duration_us;
+
+  // print the value to Serial Monitor
   Serial.print("distance: ");
   Serial.print(distance_cm);
   Serial.println(" cm");
-  delay(5);
+
+}
+
+// spins until an enemy is detected
+void scan() {
+
+}
+
+void moveForward() {
+  digitalWrite(leftBackward, LOW);
+  digitalWrite(rightBackward, LOW);
+  digitalWrite(leftForward, HIGH);
+  digitalWrite(rightForward, HIGH);
+}
+
+void moveBackward() {
+  digitalWrite(leftForward, LOW);
+  digitalWrite(rightForward, LOW);
+  digitalWrite(leftBackward, HIGH);
+  digitalWrite(rightBackward, HIGH);
+}
+
+void turnLeft() {
+  // left motor backward right motor backward
+  digitalWrite(leftForward, LOW);
+  digitalWrite(rightBackward, LOW);
+  digitalWrite(leftBackward, HIGH);
+  digitalWrite(rightForward, HIGH);
+}
+
+void turnRight() {
+  // left motor forward right motor forward 
+  digitalWrite(leftBackward, LOW);
+  digitalWrite(rightForward, LOW);
+  digitalWrite(leftForward, HIGH);
+  digitalWrite(rightBackward, HIGH);
+}
+
+// move toward enemy
+void charge() {
+
+}
+
+void loop() {
+  scan();
+  charge();
 }
