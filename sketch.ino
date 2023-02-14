@@ -66,7 +66,7 @@ void scan() {
     Serial.print(dist, 3);
     Serial.println();
     turnRight();
-    delayMicroseconds(1000000000);
+    delayMicroseconds(100);
     dist = sense();
   }
   Serial.print("Found enemy: ");
@@ -78,11 +78,11 @@ void scan() {
 void charge() {
   Serial.println("Charging!");
   moveForward();
-  delayMicroseconds(1000000000);
+  delayMicroseconds(100);
 }
 
 void loop() {
   scan();
   charge();
-  delay(1000);
+  //delay(1000);
 }
