@@ -6,6 +6,8 @@ const int rightBackward = 11;
 const int trigPin = 3;
 const int echoPin = 2;
 
+const float diameter = 30;
+
 void setup() {
   Serial.begin(9600);
   // motor
@@ -16,28 +18,6 @@ void setup() {
   // sensor
   pinMode(trigPin, OUTPUT);
   pinMode(echoPin, INPUT);
-}
-
-int sense() {
-  digitalWrite(tr, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(3, LOW);
-
-  float duration_us = pulseIn(2, HIGH);
-
-  // calculate the distance
-  float distance_cm = 0.017 * duration_us;
-
-  // print the value to Serial Monitor
-  Serial.print("distance: ");
-  Serial.print(distance_cm);
-  Serial.println(" cm");
-
-}
-
-// spins until an enemy is detected
-void scan() {
-
 }
 
 void moveForward() {
@@ -70,12 +50,39 @@ void turnRight() {
   digitalWrite(rightBackward, HIGH);
 }
 
+float sense() {
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+  float output = pulseIn(echoPin, HIGH);
+  return 0.017 * output;
+}
+
+// spins until an enemy is detected
+void scan() {
+  float dist = sense();
+  while(dist >= diameter) {
+    Serial.print("Scanning distance of ");
+    Serial.print(dist, 3);
+    Serial.println();
+    turnRight();
+    delayMicroseconds(1000000000);
+    dist = sense();
+  }
+  Serial.print("Found enemy: ");
+  Serial.print(dist, 3);
+  Serial.println();
+}
+
 // move toward enemy
 void charge() {
-
+  Serial.println("Charging!");
+  moveForward();
+  delayMicroseconds(1000000000);
 }
 
 void loop() {
   scan();
   charge();
+  delay(1000);
 }
