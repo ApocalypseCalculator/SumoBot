@@ -3,21 +3,26 @@ const int leftBackward = 9;
 const int rightForward = 10;
 const int rightBackward = 11;
 
-const int trigPin = 3;
-const int echoPin = 2;
+const int echoPinLeft = 2;
+const int trigPinLeft = 3;
+const int echoPinRight = 4;
+const int trigPinRight = 5;
 
-const float diameter = 30;
+const float MAX_DIST = 30; // detection threshold
 
 void setup() {
   Serial.begin(9600);
+  randomSeed(analogRead(1)); // read random noise
   // motor
   pinMode(leftForward, OUTPUT);
   pinMode(leftBackward, OUTPUT);
   pinMode(rightForward, OUTPUT);
   pinMode(rightBackward, OUTPUT);
   // sensor
-  pinMode(trigPin, OUTPUT);
-  pinMode(echoPin, INPUT);
+  pinMode(echoPinLeft, OUTPUT);
+  pinMode(trigPinLeft, INPUT);
+  pinMode(echoPinRight, OUTPUT);
+  pinMode(trigPinRight, INPUT);
 }
 
 void moveForward() {
@@ -35,22 +40,36 @@ void moveBackward() {
 }
 
 void turnLeft() {
-  // left motor backward right motor backward
   digitalWrite(leftForward, LOW);
   digitalWrite(rightBackward, LOW);
   digitalWrite(leftBackward, HIGH);
   digitalWrite(rightForward, HIGH);
 }
 
+void turnAndMoveLeft() {
+  // left motor backward right motor backward
+  digitalWrite(leftForward, LOW);
+  digitalWrite(rightBackward, LOW);
+  digitalWrite(leftBackward, LOW);
+  digitalWrite(rightForward, HIGH);
+}
+
 void turnRight() {
-  // left motor forward right motor forward 
   digitalWrite(leftBackward, LOW);
   digitalWrite(rightForward, LOW);
   digitalWrite(leftForward, HIGH);
   digitalWrite(rightBackward, HIGH);
 }
 
-float sense() {
+void turnAndMoveRight() {
+  // left motor forward right motor forward 
+  digitalWrite(leftBackward, LOW);
+  digitalWrite(rightForward, LOW);
+  digitalWrite(leftForward, LOW);
+  digitalWrite(rightBackward, HIGH);
+}
+
+float sense(int echoPin, int trigPin) {
   digitalWrite(trigPin, HIGH);
   delayMicroseconds(10);
   digitalWrite(trigPin, LOW);
@@ -60,18 +79,25 @@ float sense() {
 
 // spins until an enemy is detected
 void scan() {
-  float dist = sense();
-  while(dist >= diameter) {
-    Serial.print("Scanning distance of ");
-    Serial.print(dist, 3);
-    Serial.println();
-    turnRight();
+  float distLeft = sense(echoPinLeft, trigPinLeft);
+  float distRight = sense(echoPinRight, trigPinRight);
+  while(distLeft >= MAX_DIST || distRight >= MAX_DIST) {
+    if(distLeft <= MAX_DIST) {
+      turnAndMoveLeft();
+    } else if(distRight <= MAX_DIST) {
+      turnAndMoveRight();
+    } else {
+      // turn a random direction
+      if(random(1)) {
+        turnRight();
+      } else {
+        turnLeft();
+      }
+    }
     delayMicroseconds(100);
-    dist = sense();
+    distLeft = sense(echoPinLeft, trigPinLeft);
+    distRight = sense(echoPinRight, trigPinRight);
   }
-  Serial.print("Found enemy: ");
-  Serial.print(dist, 3);
-  Serial.println();
 }
 
 // move toward enemy
