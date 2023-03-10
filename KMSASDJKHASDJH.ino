@@ -79,24 +79,38 @@ float senseRight() {
 
 // takes a reading from the ldr
 float senseLDR() {
-  int ldrValue = analogRead(ldrIn);
-  return ldrValue * (5.0 / 1023.0);
+  int sum = 0;
+  // take 5 measurements for noise reduction
+  for(int i = 0; i < 5; ++i) {
+    int ldrValue = analogRead(ldrIn);
+    sum += ldrValue;
+    delay(10);
+  }
+  // take the average of the measurements
+  return (sum / 5.0) * (5.0 / 1023.0);
 }
 
 // takes a reading from the lidar sensor
 // todo add more comments here
-int senseLidar() {
-  float lux = lidar.readLux(VL6180X_ALS_GAIN_5);
-  uint8_t range = lidar.readRange();
-  uint8_t status = lidar.readRangeStatus();
-  // keep trying until the sensor works
-  while(status != VL6180X_ERROR_NONE) {
+float senseLidar() {
+  int sum = 0;
+  // take 5 measurements for noise reduction
+  for(int i = 0; i < 5; ++i) {
+    float lux = lidar.readLux(VL6180X_ALS_GAIN_5);
+    uint8_t range = lidar.readRange();
+    uint8_t status = lidar.readRangeStatus();
+    // keep trying until the sensor works
+    while(status != VL6180X_ERROR_NONE) {
+      delay(10);
+      lux = lidar.readLux(VL6180X_ALS_GAIN_5);
+      range = lidar.readRange();
+      status = lidar.readRangeStatus();
+    }
+    sum += range;
     delay(10);
-    lux = lidar.readLux(VL6180X_ALS_GAIN_5);
-    range = lidar.readRange();
-    status = lidar.readRangeStatus();
   }
-  return (int) range;
+  // take the average of the measurements
+  return sum / 5.0;
 }
 
 // changes the speed of the motors gradually to not overwhelm the motors
@@ -207,11 +221,11 @@ void loop() {
         Serial.println(ldrOut);
       }
       // check light sensor reading
-      int lidarOut = senseLidar();
+      float lidarOut = senseLidar();
       Serial.print("Lidar value: ");
       Serial.println(lidarOut);
       // todo: just use either < 29 OR > 39
-      while(lidarOut < 29 || lidarOut > 39) {
+      while(lidarOut < 29.0 || lidarOut > 39.0) {
         // likely white surface behind, so move forward
         Serial.println("Moving forward");
         moveForward();
