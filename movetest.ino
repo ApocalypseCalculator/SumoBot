@@ -22,7 +22,7 @@ const int ldrIn = A0;       // ldr input
 int startTime;              // tracks the start time of the program
 
 const int SPEED = 160;      // speed of motors (0-255)
-const int SLOW_STEPS = 2;   // number of steps to slow down
+const int SLOW_STEPS = 160;   // number of steps to slow down
 
 // sets up all of the pins and sets the start time
 void setup() {
@@ -44,7 +44,7 @@ void stop() {
   for(int i = 1; i <= SLOW_STEPS; i++) {
     analogWrite(pwmLeft, SPEED - i * stepSize);
     analogWrite(pwmRight, SPEED - i * stepSize);
-    delay(10);
+    delay(1);
   }
   analogWrite(pwmLeft, 0);
   analogWrite(pwmRight, 0);
@@ -56,7 +56,7 @@ void changeDir(int newLeftDir, int newRightDir) {
   for(int i = 1; i <= SLOW_STEPS; i++) {
     analogWrite(pwmLeft, SPEED - i * stepSize);
     analogWrite(pwmRight, SPEED - i * stepSize);
-    delay(10);
+    delay(1);
   }
   // change direction
   digitalWrite(dirLeft, newLeftDir);
@@ -65,7 +65,7 @@ void changeDir(int newLeftDir, int newRightDir) {
   for(int i = SLOW_STEPS - 1; i >= 0; i--) {
     analogWrite(pwmLeft, SPEED - i * stepSize);
     analogWrite(pwmRight, SPEED - i * stepSize);
-    delay(10);
+    delay(1);
   }
 }
 
@@ -102,11 +102,12 @@ void loop() {
       analogWrite(pwmLeft, SPEED);
       analogWrite(pwmRight, SPEED);
       tmp = 1;
+    } else {
+      moveForward();
+      delay(1000);
+      moveBackward();
+      delay(1000);
     }
-    moveForward();
-    delay(1000);
-    moveBackward();
-    delay(1000);
   } else if(past > 10000) {
     if(tmp == 1) {
       stop();
