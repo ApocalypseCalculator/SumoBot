@@ -96,11 +96,13 @@ void loop() {
   // 5 second initial delay
   int past = millis() - startTime;
   if(5000 < past && past < 10000) {
-    tmp = 1;
-    digitalWrite(dirLeft, LOW);
-    digitalWrite(dirRight, HIGH);
-    analogWrite(pwmLeft, SPEED);
-    analogWrite(pwmRight, SPEED);
+    if(tmp == 0) {
+      digitalWrite(dirLeft, LOW);
+      digitalWrite(dirRight, HIGH);
+      analogWrite(pwmLeft, SPEED);
+      analogWrite(pwmRight, SPEED);
+      tmp = 1;
+    }
     moveForward();
     delay(1000);
     moveBackward();
@@ -108,7 +110,7 @@ void loop() {
   } else if(past > 10000) {
     if(tmp == 1) {
       stop();
-      tmp = 0;
+      tmp = 2;
     }
   }
 }
