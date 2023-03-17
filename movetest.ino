@@ -55,18 +55,29 @@ void changeDir(int newLeftDir, int newRightDir) {
   int stepSize = SPEED / SLOW_STEPS;
   for (int i = 1; i <= SLOW_STEPS; i++) {
     analogWrite(pwmRight, SPEED - i * stepSize);
-    analogWrite(pwmLeft, SPEED - i * stepSize);
+    
+    if(2 * i <= SLOW_STEPS) {
+      analogWrite(pwmLeft, SPEED - i * 2 * stepSize);
+    }
     delay(10);
   }
   // change direction
+  analogWrite(pwmRight, 0);
+  analogWrite(pwmLeft, 0);
   digitalWrite(dirRight, newRightDir);
   digitalWrite(dirLeft, newLeftDir);
+  delay(10);
   // speed up motors
-  for (int i = SLOW_STEPS - 1; i >= 0; i--) {
-    analogWrite(pwmRight, SPEED - i * stepSize);
-    analogWrite(pwmLeft, SPEED - i * stepSize);
+  for(int i = 1; i <= SLOW_STEPS; ++i) {
+    analogWrite(pwmRight, i * stepSize);
+
+    if(2 * i <= SLOW_STEPS) {
+      analogWrite(pwmRight, 2 * i * stepSize);
+    }
     delay(10);
   }
+  analogWrite(pwmRight, SPEED);
+  analogWrite(pwmLeft, SPEED);
 }
 
 // makes the sumobot move forward
