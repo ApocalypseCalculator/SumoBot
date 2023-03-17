@@ -114,10 +114,10 @@ void loop() {
       analogWrite(pwmRight, SPEED);
       tmp = 1;
     } else {
-      moveForward();
-      delay(1000);
-      moveBackward();
-      delay(1000);
+      //moveForward();
+      //delay(1000);
+      //moveBackward();
+      //delay(1000);
     }
   } else if (past > 10000) {
     if (tmp == 1) {
