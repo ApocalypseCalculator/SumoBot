@@ -22,7 +22,7 @@ const int ldrIn = A0;       // ldr input
 int startTime;              // tracks the start time of the program
 
 const int SPEED = 160;      // speed of motors (0-255)
-const int SLOW_STEPS = 8;   // number of steps to slow down
+const int SLOW_STEPS = 4;   // number of steps to slow down
 
 // sets up all of the pins and sets the start time
 void setup() {
@@ -95,17 +95,17 @@ int tmp = 0;
 void loop() {
   // 5 second initial delay
   int past = millis() - startTime;
-  if(5000 < past && past < 15000) {
+  if(5000 < past && past < 10000) {
     tmp = 1;
     digitalWrite(dirLeft, LOW);
     digitalWrite(dirRight, HIGH);
     analogWrite(pwmLeft, SPEED);
     analogWrite(pwmRight, SPEED);
     moveForward();
-    delay(500);
+    delay(1000);
     moveBackward();
-    delay(500);
-  } else if(past > 15000) {
+    delay(1000);
+  } else if(past > 10000) {
     if(tmp == 1) {
       stop();
       tmp = 0;
