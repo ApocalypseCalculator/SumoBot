@@ -69,29 +69,24 @@ void changeDir(int newLeftDir, int newRightDir) {
   }
 }
 
-/*
-int leftFwd = LOW;          // direction of left motor (HIGH is forward)
-int rightFwd = LOW;         // direction of right motor (LOW is forward)
-*/
-
 // makes the sumobot move forward
 void moveForward() {
-  changeDir(HIGH, LOW); // left forward, right forward
+  changeDir(LOW, HIGH); // left forward, right forward
 }
 
 // makes the sumobot move backward
 void moveBackward() {
-  changeDir(LOW, HIGH); // left backward, right backward
+  changeDir(HIGH, LOW); // left backward, right backward
 }
 
 // makes the sumobot turn left
 void turnLeft() {
-  changeDir(LOW, LOW); // left backward, right forward
+  changeDir(HIGH, HIGH); // left backward, right forward
 }
 
 // makes the sumobot turn right
 void turnRight() {
-  changeDir(HIGH, HIGH); // left forward, right backward
+  changeDir(LOW, LOW); // left forward, right backward
 }
 
 int tmp = 0;
@@ -100,17 +95,17 @@ int tmp = 0;
 void loop() {
   // 5 second initial delay
   int past = millis() - startTime;
-  if(5000 < past && past < 25000) {
+  if(5000 < past && past < 15000) {
     tmp = 1;
-    digitalWrite(dirLeft, HIGH);
-    digitalWrite(dirRight, LOW);
+    digitalWrite(dirLeft, LOW);
+    digitalWrite(dirRight, HIGH);
     analogWrite(pwmLeft, SPEED);
     analogWrite(pwmRight, SPEED);
     moveForward();
     delay(500);
     moveBackward();
     delay(500);
-  } else if(past > 25000) {
+  } else if(past > 15000) {
     if(tmp == 1) {
       stop();
       tmp = 0;
