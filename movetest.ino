@@ -22,7 +22,7 @@ const int ldrIn = A0;       // ldr input
 int startTime;              // tracks the start time of the program
 
 const int SPEED = 160;      // speed of motors (0-255)
-const int SLOW_STEPS = 4;   // number of steps to slow down
+const int SLOW_STEPS = 2;   // number of steps to slow down
 
 // sets up all of the pins and sets the start time
 void setup() {
