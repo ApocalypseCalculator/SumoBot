@@ -46,8 +46,8 @@ void stop() {
     analogWrite(pwmLeft, SPEED - i * stepSize);
     delay(10);
   }
-  analogWrite(pwmLeft, 0);
   analogWrite(pwmRight, 0);
+  analogWrite(pwmLeft, 0);
 }
 
 void changeDir(int newLeftDir, int newRightDir) {
@@ -59,8 +59,8 @@ void changeDir(int newLeftDir, int newRightDir) {
     delay(10);
   }
   // change direction
-  digitalWrite(dirLeft, newLeftDir);
   digitalWrite(dirRight, newRightDir);
+  digitalWrite(dirLeft, newLeftDir);
   // speed up motors
   for (int i = SLOW_STEPS - 1; i >= 0; i--) {
     analogWrite(pwmRight, SPEED - i * stepSize);
@@ -98,8 +98,8 @@ void loop() {
   if (5000 < past && past < 10000) {
     if (tmp == 0) {
       digitalWrite(dirLeft, LOW);
-      digitalWrite(dirRight, HIGH);
       analogWrite(pwmLeft, SPEED);
+      digitalWrite(dirRight, HIGH);
       analogWrite(pwmRight, SPEED);
       tmp = 1;
     } else {
