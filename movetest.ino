@@ -22,7 +22,7 @@ const int ldrIn = A0;  // ldr input
 int startTime;  // tracks the start time of the program
 
 const int SPEED = 160;       // speed of motors (0-255)
-const int SLOW_STEPS = 4;  // number of steps to slow down
+const int SLOW_STEPS = 16;  // number of steps to slow down
 
 // sets up all of the pins and sets the start time
 void setup() {
@@ -56,8 +56,8 @@ void changeDir(int newLeftDir, int newRightDir) {
   for (int i = 1; i <= SLOW_STEPS; i++) {
     analogWrite(pwmRight, SPEED - i * stepSize);
     
-    if(2 * i <= SLOW_STEPS) {
-      analogWrite(pwmLeft, SPEED - i * 2 * stepSize);
+    if(8 * i <= SLOW_STEPS) {
+      analogWrite(pwmLeft, SPEED - 8 * i * stepSize);
     }
     delay(10);
   }
@@ -71,8 +71,8 @@ void changeDir(int newLeftDir, int newRightDir) {
   for(int i = 1; i <= SLOW_STEPS; ++i) {
     analogWrite(pwmRight, i * stepSize);
 
-    if(2 * i <= SLOW_STEPS) {
-      analogWrite(pwmRight, 2 * i * stepSize);
+    if(8 * i <= SLOW_STEPS) {
+      analogWrite(pwmRight, 8 * i * stepSize);
     }
     delay(10);
   }
