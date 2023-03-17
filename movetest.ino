@@ -7,10 +7,10 @@
 #include <Wire.h>
 #include "Adafruit_VL6180X.h"
 
-const int pwmLeft = 3;    // left motor speed control
-const int dirLeft = 12;   // left motor direction
-const int pwmRight = 11;  // right motor speed control
-const int dirRight = 13;  // right motor direction
+const int pwmRight = 3; 
+const int dirRight = 12;  
+const int pwmLeft = 11;
+const int dirLeft = 13; 
 
 const int echoLeft = 2;   // left ultrasonic sensor echo
 const int trigLeft = 3;   // left ultrasonic sensor trigger
@@ -82,22 +82,22 @@ void changeDir(int newLeftDir, int newRightDir) {
 
 // makes the sumobot move forward
 void moveForward() {
-  changeDir(LOW, HIGH);  // left forward, right forward
+  changeDir(HIGH, LOW);  // left forward, right forward
 }
 
 // makes the sumobot move backward
 void moveBackward() {
-  changeDir(HIGH, LOW);  // left backward, right backward
+  changeDir(LOW, HIGH);  // left backward, right backward
 }
 
 // makes the sumobot turn left
 void turnLeft() {
-  changeDir(HIGH, HIGH);  // left backward, right forward
+  changeDir(LOW, LOW);  // left backward, right forward
 }
 
 // makes the sumobot turn right
 void turnRight() {
-  changeDir(LOW, LOW);  // left forward, right backward
+  changeDir(HIGH, HIGH);  // left forward, right backward
 }
 
 int tmp = 0;
@@ -108,9 +108,9 @@ void loop() {
   int past = millis() - startTime;
   if (5000 < past && past < 10000) {
     if (tmp == 0) {
-      digitalWrite(dirLeft, LOW);
+      digitalWrite(dirLeft, HIGH);
       analogWrite(pwmLeft, SPEED);
-      digitalWrite(dirRight, HIGH);
+      digitalWrite(dirRight, LOW);
       analogWrite(pwmRight, SPEED);
       tmp = 1;
     } else {
