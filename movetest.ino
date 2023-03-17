@@ -39,6 +39,17 @@ void setup() {
   startTime = millis();
 }
 
+void stop() {
+  int stepSize = SPEED / SLOW_STEPS;
+  for(int i = 1; i <= SLOW_STEPS; i++) {
+    analogWrite(pwmLeft, SPEED - i * stepSize);
+    analogWrite(pwmRight, SPEED - i * stepSize);
+    delay(10);
+  }
+  analogWrite(pwmLeft, 0);
+  analogWrite(pwmRight, 0);
+}
+
 void changeDir(int newLeftDir, int newRightDir) {
   // slow down motors
   int stepSize = SPEED / SLOW_STEPS;
@@ -83,13 +94,26 @@ void turnRight() {
   changeDir(HIGH, HIGH); // left forward, right backward
 }
 
+int tmp = 0;
+
 // the main loop of the program
 void loop() {
   // 5 second initial delay
-  if(millis() - startTime > 5000) {
+  int past = millis() - startTime;
+  if(5000 < past && past < 25000) {
+    tmp = 1;
+    digitalWrite(dirLeft, HIGH);
+    digitalWrite(dirRight, LOW);
+    analogWrite(pwmLeft, SPEED);
+    analogWrite(pwmRight, SPEED);
     moveForward();
     delay(500);
     moveBackward();
     delay(500);
+  } else if(past > 25000) {
+    if(tmp == 1) {
+      stop();
+      tmp = 0;
+    }
   }
 }
