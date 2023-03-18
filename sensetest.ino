@@ -8,10 +8,10 @@
 #include "Adafruit_VL6180X.h"
 #include <MMA8453_n0m1.h>
 
-const int echoLeft = 2;     // left ultrasonic sensor echo
-const int trigLeft = 3;     // left ultrasonic sensor trigger
-const int echoRight = 4;    // right ultrasonic sensor echo
-const int trigRight = 5;    // right ultrasonic sensor trigger
+const int echoLeft = 5;     // left ultrasonic sensor echo
+const int trigLeft = 4;     // left ultrasonic sensor trigger
+const int echoRight = 7;    // right ultrasonic sensor echo
+const int trigRight = 6;    // right ultrasonic sensor trigger
 
 const int ldrIn = A0;       // ldr input
 
