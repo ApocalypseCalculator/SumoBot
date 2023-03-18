@@ -73,7 +73,7 @@ float senseLidar() {
 void loop() {
   // 5 second initial delay
   if(millis() - startTime > 5000) {
-    float meas = senseLDR();
+    float meas = senseLidar();
     Serial.println(meas);
     delay(500);
   }
