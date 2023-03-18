@@ -38,13 +38,14 @@ void setup() {
 // ultrasonic readings
 void senseDist(float* left, float* right) {
   digitalWrite(trigLeft, HIGH);
-  digitalWrite(trigRight, HIGH);
   delayMicroseconds(10);
   digitalWrite(trigLeft, LOW);
-  digitalWrite(trigRight, LOW);
   float output1 = pulseIn(echoLeft, HIGH);
-  float output2 = pulseIn(echoRight, HIGH);
   *left = 0.017 * output1;
+  digitalWrite(trigRight, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigRight, LOW);
+  float output2 = pulseIn(echoRight, HIGH);
   *right = 0.017 * output2;
 }
 
