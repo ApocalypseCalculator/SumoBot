@@ -139,7 +139,7 @@ void moveForward() {
 // makes the sumobot move backward
 void moveBackward() {
   changeDirF2B(LOW, HIGH);
-  changeDir(LOW, HIGH);  // left backward, right backward
+  //changeDir(LOW, HIGH);  // left backward, right backward
 }
 
 // makes the sumobot turn left
