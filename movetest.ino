@@ -21,8 +21,10 @@ const int ldrIn = A0;  // ldr input
 
 int startTime;  // tracks the start time of the program
 
-const int SPEED = 160;       // speed of motors (0-255)
-const int SLOW_STEPS = 16;  // number of steps to slow down
+const int LEFT_SPEED = 160; // speed of motors (0-255)
+const int RIGHT_SPEED = 80;    
+
+const int SLOW_STEPS = 4;  // number of steps to slow down
 
 // sets up all of the pins and sets the start time
 void setup() {
@@ -40,10 +42,11 @@ void setup() {
 }
 
 void stop() {
-  int stepSize = SPEED / SLOW_STEPS;
+  int leftStep = LEFT_SPEED / SLOW_STEPS;
+  int rightStep = RIGHT_SPEED / SLOW_STEPS;
   for (int i = 1; i <= SLOW_STEPS; i++) {
-    analogWrite(pwmRight, SPEED - i * stepSize);
-    analogWrite(pwmLeft, SPEED - i * stepSize);
+    analogWrite(pwmRight, LEFT_SPEED - i * rightStep);
+    analogWrite(pwmLeft, RIGHT_SPEED - i * leftStep);
     delay(10);
   }
   analogWrite(pwmRight, 0);
@@ -52,13 +55,11 @@ void stop() {
 
 void changeDir(int newLeftDir, int newRightDir) {
   // slow down motors
-  int stepSize = SPEED / SLOW_STEPS;
+  int leftStep = LEFT_SPEED / SLOW_STEPS;
+  int rightStep = RIGHT_SPEED / SLOW_STEPS;
   for (int i = 1; i <= SLOW_STEPS; i++) {
-    analogWrite(pwmRight, SPEED - i * stepSize);
-    
-    if(8 * i <= SLOW_STEPS) {
-      analogWrite(pwmLeft, SPEED - 8 * i * stepSize);
-    }
+    analogWrite(pwmRight, LEFT_SPEED - i * rightStep);
+    analogWrite(pwmLeft, RIGHT_SPEED - i * leftStep);
     delay(10);
   }
   // change direction
@@ -69,15 +70,12 @@ void changeDir(int newLeftDir, int newRightDir) {
   delay(10);
   // speed up motors
   for(int i = 1; i <= SLOW_STEPS; ++i) {
-    analogWrite(pwmRight, i * stepSize);
-
-    if(8 * i <= SLOW_STEPS) {
-      analogWrite(pwmRight, 8 * i * stepSize);
-    }
+    analogWrite(pwmRight, i * rightStep);
+    analogWrite(pwmLeft, i * leftStep);
     delay(10);
   }
-  analogWrite(pwmRight, SPEED);
-  analogWrite(pwmLeft, SPEED);
+  analogWrite(pwmRight, LEFT_SPEED);
+  analogWrite(pwmLeft, RIGHT_SPEED);
 }
 
 // makes the sumobot move forward
@@ -109,15 +107,15 @@ void loop() {
   if (5000 < past && past < 10000) {
     if (tmp == 0) {
       digitalWrite(dirLeft, HIGH);
-      analogWrite(pwmLeft, SPEED);
+      analogWrite(pwmLeft, LEFT_SPEED);
       digitalWrite(dirRight, LOW);
-      analogWrite(pwmRight, SPEED);
+      analogWrite(pwmRight, RIGHT_SPEED);
       tmp = 1;
     } else {
-      //moveForward();
-      //delay(1000);
-      //moveBackward();
-      //delay(1000);
+      moveForward();
+      delay(1000);
+      moveBackward();
+      delay(1000);
     }
   } else if (past > 10000) {
     if (tmp == 1) {
