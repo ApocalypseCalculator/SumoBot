@@ -33,6 +33,11 @@ void setup() {
   startTime = millis();
   accel.setI2CAddr(0x1C);
   accel.dataMode(true, 2); //2, 4, 8g range
+  lidar = Adafruit_VL6180X();
+  if(!vl.begin()) {
+    Serial.println("Failed to find sensor");
+    while (1);
+  }
 }
 
 // ultrasonic readings
@@ -59,6 +64,7 @@ float senseLidar() {
   float lux = lidar.readLux(VL6180X_ALS_GAIN_5);
   uint8_t range = lidar.readRange();
   uint8_t status = lidar.readRangeStatus();
+  /*
   // keep trying until the sensor works
   while(status != VL6180X_ERROR_NONE) {
     delay(10);
@@ -66,6 +72,7 @@ float senseLidar() {
     range = lidar.readRange();
     status = lidar.readRangeStatus();
   }
+  */
   return (float) range;
 }
 
