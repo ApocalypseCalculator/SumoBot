@@ -10,8 +10,8 @@
 
 const int echoLeft = 5;     // left ultrasonic sensor echo
 const int trigLeft = 4;     // left ultrasonic sensor trigger
-const int echoRight = 7;    // right ultrasonic sensor echo
-const int trigRight = 6;    // right ultrasonic sensor trigger
+const int echoRight = 6;    // right ultrasonic sensor echo
+const int trigRight = 7;    // right ultrasonic sensor trigger
 
 const int ldrIn = A0;       // ldr input
 
