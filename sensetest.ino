@@ -73,14 +73,8 @@ float senseLidar() {
 void loop() {
   // 5 second initial delay
   if(millis() - startTime > 5000) {
-    float left, right;
-    senseDist(&left, &right);
-    Serial.println();
-    Serial.print("ULTRASONIC: ");
-    Serial.print(left);
-    Serial.print(" ");
-    Serial.println(right);
-    Serial.println();
-    delay(1000);
+    float meas = senseLDR();
+    Serial.println(meas);
+    delay(500);
   }
 }
