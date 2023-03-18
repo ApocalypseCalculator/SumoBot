@@ -67,7 +67,7 @@ void changeDir(int newLeftDir, int newRightDir) {
   analogWrite(pwmRight, 0);
   digitalWrite(dirLeft, newLeftDir);
   digitalWrite(dirRight, newRightDir);
-  delay(500);
+  delay(1000);
   // speed up motors
   for(int i = 1; i <= SLOW_STEPS; ++i) {
     analogWrite(pwmLeft, i * leftStep);
