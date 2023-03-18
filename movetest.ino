@@ -21,8 +21,11 @@ const int ldrIn = A0;  // ldr input
 
 int startTime;  // tracks the start time of the program
 
-const int LEFT_SPEED = 160; // speed of motors (0-255)
-const int RIGHT_SPEED = 96;    
+const int LEFT_SPEED_FWD = 160; // speed of motors (0-255)
+const int RIGHT_SPEED_FWD = 96;    
+
+const int LEFT_SPEED_BWD = 160;
+const int RIGHT_SPEED_BWD = 80;
 
 const int SLOW_STEPS = 4;  // number of steps to slow down
 
@@ -42,11 +45,11 @@ void setup() {
 }
 
 void stop() {
-  int leftStep = LEFT_SPEED / SLOW_STEPS;
-  int rightStep = RIGHT_SPEED / SLOW_STEPS;
+  int leftStep = LEFT_SPEED_BWD / SLOW_STEPS;
+  int rightStep = RIGHT_SPEED_BWD / SLOW_STEPS;
   for (int i = 1; i <= SLOW_STEPS; i++) {
-    analogWrite(pwmLeft, LEFT_SPEED - i * leftStep);
-    analogWrite(pwmRight, RIGHT_SPEED - i * rightStep);
+    analogWrite(pwmLeft, LEFT_SPEED_BWD - i * leftStep);
+    analogWrite(pwmRight, RIGHT_SPEED_BWD - i * rightStep);
     delay(10);
   }
   analogWrite(pwmLeft, 0);
@@ -55,11 +58,11 @@ void stop() {
 
 void changeDirF2B(int newLeftDir, int newRightDir) {
   // slow down motors
-  int leftStep = LEFT_SPEED / SLOW_STEPS;
-  int rightStep = RIGHT_SPEED / SLOW_STEPS;
+  int leftStepFwd = LEFT_SPEED_FWD / SLOW_STEPS;
+  int rightStepFwd = RIGHT_SPEED_FWD / SLOW_STEPS;
   for (int i = 1; i <= SLOW_STEPS; i++) {
-    analogWrite(pwmLeft, LEFT_SPEED - i * leftStep);
-    analogWrite(pwmRight, RIGHT_SPEED - i * rightStep);
+    analogWrite(pwmLeft, LEFT_SPEED_FWD - i * leftStepFwd);
+    analogWrite(pwmRight, RIGHT_SPEED_FWD - i * rightStepFwd);
     delay(10);
   }
   // change direction
@@ -68,24 +71,25 @@ void changeDirF2B(int newLeftDir, int newRightDir) {
   digitalWrite(dirLeft, newLeftDir);
   digitalWrite(dirRight, newRightDir);
   delay(1000);
-  rightStep = LEFT_SPEED / SLOW_STEPS; // baf
+  int leftStepBwd = LEFT_SPEED_BWD / SLOW_STEPS;
+  int rightStepBwd = RIGHT_SPEED_BWD / SLOW_STEPS;
   // speed up motors
   for(int i = 1; i <= SLOW_STEPS; ++i) {
-    analogWrite(pwmLeft, i * leftStep);
-    analogWrite(pwmRight, i * rightStep);
+    analogWrite(pwmLeft, i * leftStepBwd);
+    analogWrite(pwmRight, i * rightStepBwd);
     delay(10);
   }
-  analogWrite(pwmLeft, LEFT_SPEED);
-  analogWrite(pwmRight, LEFT_SPEED);
+  analogWrite(pwmLeft, LEFT_SPEED_BWD);
+  analogWrite(pwmRight, RIGHT_SPEED_BWD);
 }
 
 void changeDirB2F(int newLeftDir, int newRightDir) {
   // slow down motors
-  int leftStep = LEFT_SPEED / SLOW_STEPS; // BAF
-  int rightStep = LEFT_SPEED / SLOW_STEPS;
+  int leftStepBwd = LEFT_SPEED_BWD / SLOW_STEPS;
+  int rightStepBwd = RIGHT_SPEED_BWD / SLOW_STEPS;
   for (int i = 1; i <= SLOW_STEPS; i++) {
-    analogWrite(pwmLeft, LEFT_SPEED - i * leftStep);
-    analogWrite(pwmRight, LEFT_SPEED - i * rightStep);
+    analogWrite(pwmLeft, LEFT_SPEED_BWD - i * leftStepBwd);
+    analogWrite(pwmRight, RIGHT_SPEED_BWD - i * rightStepBwd);
     delay(10);
   }
   // change direction
@@ -94,17 +98,19 @@ void changeDirB2F(int newLeftDir, int newRightDir) {
   digitalWrite(dirLeft, newLeftDir);
   digitalWrite(dirRight, newRightDir);
   delay(1000);
-  rightStep = RIGHT_SPEED / SLOW_STEPS; // BAF
+  int leftStepFwd = LEFT_SPEED_FWD / SLOW_STEPS;
+  int rightStepFwd = RIGHT_SPEED_FWD / SLOW_STEPS;
   // speed up motors
   for(int i = 1; i <= SLOW_STEPS; ++i) {
-    analogWrite(pwmLeft, i * leftStep);
-    analogWrite(pwmRight, i * rightStep);
+    analogWrite(pwmLeft, i * leftStepFwd);
+    analogWrite(pwmRight, i * rightStepFwd);
     delay(10);
   }
-  analogWrite(pwmLeft, LEFT_SPEED);
-  analogWrite(pwmRight, RIGHT_SPEED);
+  analogWrite(pwmLeft, LEFT_SPEED_FWD);
+  analogWrite(pwmRight, RIGHT_SPEED_FWD);
 }
 
+/*
 void changeDir(int newLeftDir, int newRightDir) {
   // slow down motors
   int leftStep = LEFT_SPEED / SLOW_STEPS;
@@ -129,6 +135,7 @@ void changeDir(int newLeftDir, int newRightDir) {
   analogWrite(pwmLeft, LEFT_SPEED);
   analogWrite(pwmRight, RIGHT_SPEED);
 }
+*/
 
 // makes the sumobot move forward
 void moveForward() {
@@ -144,12 +151,12 @@ void moveBackward() {
 
 // makes the sumobot turn left
 void turnLeft() {
-  changeDir(LOW, LOW);  // left backward, right forward
+  //changeDir(LOW, LOW);  // left backward, right forward
 }
 
 // makes the sumobot turn right
 void turnRight() {
-  changeDir(HIGH, HIGH);  // left forward, right backward
+  //changeDir(HIGH, HIGH);  // left forward, right backward
 }
 
 int tmp = 0;
@@ -161,9 +168,9 @@ void loop() {
   if (5000 < past && past < 15000) {
     if (tmp == 0) {
       digitalWrite(dirLeft, HIGH);
-      analogWrite(pwmLeft, LEFT_SPEED);
+      analogWrite(pwmLeft, LEFT_SPEED_FWD);
       digitalWrite(dirRight, LOW);
-      analogWrite(pwmRight, RIGHT_SPEED);
+      analogWrite(pwmRight, RIGHT_SPEED_FWD);
       tmp = 1;
     } else {
       moveBackward();
