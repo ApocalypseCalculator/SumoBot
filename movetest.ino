@@ -22,7 +22,7 @@ const int ldrIn = A0;  // ldr input
 int startTime;  // tracks the start time of the program
 
 const int LEFT_SPEED = 160; // speed of motors (0-255)
-const int RIGHT_SPEED = 90;    
+const int RIGHT_SPEED = 96;    
 
 const int SLOW_STEPS = 4;  // number of steps to slow down
 
@@ -53,6 +53,58 @@ void stop() {
   analogWrite(pwmRight, 0);
 }
 
+void changeDirF2B(int newLeftDir, int newRightDir) {
+  // slow down motors
+  int leftStep = LEFT_SPEED / SLOW_STEPS;
+  int rightStep = RIGHT_SPEED / SLOW_STEPS;
+  for (int i = 1; i <= SLOW_STEPS; i++) {
+    analogWrite(pwmLeft, LEFT_SPEED - i * leftStep);
+    analogWrite(pwmRight, RIGHT_SPEED - i * rightStep);
+    delay(10);
+  }
+  // change direction
+  analogWrite(pwmLeft, 0);
+  analogWrite(pwmRight, 0);
+  digitalWrite(dirLeft, newLeftDir);
+  digitalWrite(dirRight, newRightDir);
+  delay(1000);
+  rightStep = LEFT_SPEED / SLOW_STEPS; // baf
+  // speed up motors
+  for(int i = 1; i <= SLOW_STEPS; ++i) {
+    analogWrite(pwmLeft, i * leftStep);
+    analogWrite(pwmRight, i * rightStep);
+    delay(10);
+  }
+  analogWrite(pwmLeft, LEFT_SPEED);
+  analogWrite(pwmRight, LEFT_SPEED);
+}
+
+void changeDirB2F(int newLeftDir, int newRightDir) {
+  // slow down motors
+  int leftStep = LEFT_SPEED / SLOW_STEPS; // BAF
+  int rightStep = LEFT_SPEED / SLOW_STEPS;
+  for (int i = 1; i <= SLOW_STEPS; i++) {
+    analogWrite(pwmLeft, LEFT_SPEED - i * leftStep);
+    analogWrite(pwmRight, LEFT_SPEED - i * rightStep);
+    delay(10);
+  }
+  // change direction
+  analogWrite(pwmLeft, 0);
+  analogWrite(pwmRight, 0);
+  digitalWrite(dirLeft, newLeftDir);
+  digitalWrite(dirRight, newRightDir);
+  delay(1000);
+  rightStep = RIGHT_SPEED / SLOW_STEPS; // BAF
+  // speed up motors
+  for(int i = 1; i <= SLOW_STEPS; ++i) {
+    analogWrite(pwmLeft, i * leftStep);
+    analogWrite(pwmRight, i * rightStep);
+    delay(10);
+  }
+  analogWrite(pwmLeft, LEFT_SPEED);
+  analogWrite(pwmRight, RIGHT_SPEED);
+}
+
 void changeDir(int newLeftDir, int newRightDir) {
   // slow down motors
   int leftStep = LEFT_SPEED / SLOW_STEPS;
@@ -80,11 +132,13 @@ void changeDir(int newLeftDir, int newRightDir) {
 
 // makes the sumobot move forward
 void moveForward() {
-  changeDir(HIGH, LOW);  // left forward, right forward
+  changeDirB2F(HIGH, LOW);
+  //changeDir(HIGH, LOW);  // left forward, right forward
 }
 
 // makes the sumobot move backward
 void moveBackward() {
+  changeDirF2B(LOW, HIGH);
   changeDir(LOW, HIGH);  // left backward, right backward
 }
 
@@ -112,9 +166,9 @@ void loop() {
       analogWrite(pwmRight, RIGHT_SPEED);
       tmp = 1;
     } else {
-      moveForward();
-      delay(1000);
       moveBackward();
+      delay(1000);
+      moveForward();
       delay(1000);
     }
   } else if (past > 15000) {
