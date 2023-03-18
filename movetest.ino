@@ -22,7 +22,7 @@ const int ldrIn = A0;  // ldr input
 int startTime;  // tracks the start time of the program
 
 const int LEFT_SPEED = 160; // speed of motors (0-255)
-const int RIGHT_SPEED = 80;    
+const int RIGHT_SPEED = 90;    
 
 const int SLOW_STEPS = 4;  // number of steps to slow down
 
@@ -67,7 +67,7 @@ void changeDir(int newLeftDir, int newRightDir) {
   analogWrite(pwmRight, 0);
   digitalWrite(dirLeft, newLeftDir);
   digitalWrite(dirRight, newRightDir);
-  delay(10);
+  delay(500);
   // speed up motors
   for(int i = 1; i <= SLOW_STEPS; ++i) {
     analogWrite(pwmLeft, i * leftStep);
@@ -104,7 +104,7 @@ int tmp = 0;
 void loop() {
   // 5 second initial delay
   int past = millis() - startTime;
-  if (5000 < past && past < 10000) {
+  if (5000 < past && past < 15000) {
     if (tmp == 0) {
       digitalWrite(dirLeft, HIGH);
       analogWrite(pwmLeft, LEFT_SPEED);
@@ -117,7 +117,7 @@ void loop() {
       moveBackward();
       delay(1000);
     }
-  } else if (past > 10000) {
+  } else if (past > 15000) {
     if (tmp == 1) {
       stop();
       tmp = 2;
