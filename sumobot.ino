@@ -247,10 +247,10 @@ void loop() {
     } else if(lidarOut < 46.00) {
       // detected enemy behind
       moveBackward();
-    } else if(accelX > 0) {
+    } else if(accelX > 75.0) {
       // detected enemy pushing from right
       turnLeftBump();
-    } else if(accelX < 0) {
+    } else if(accelX < -75.0) {
       // detected enemy pushing from left
       turnRightBump();
     } else {
