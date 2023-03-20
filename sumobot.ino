@@ -101,7 +101,7 @@ float senseLidar() {
   static int window[5] = {0};
   static int pointer = 0;
   static int sum = 0;
-  float lux = lidar.readLux(VL6180X_ALS_GAIN_5); // TODO: change this
+  float lux = lidar.readLux(VL6180X_ALS_GAIN_2_5); // 5 = neutral gain, low gain for high light (1, 1.25, 1.67, 2.5), high gain for low light (10, 20, 40). slightly lower gain as we are in classroom with high ambient light
   uint8_t range = lidar.readRange();
   sum -= window[pointer];
   window[pointer] = (int) range;
