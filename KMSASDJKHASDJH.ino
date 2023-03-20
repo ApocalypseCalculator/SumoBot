@@ -21,6 +21,7 @@ const int echoRight = 6;    // right ultrasonic sensor echo
 const int trigRight = 7;    // right ultrasonic sensor trigger
 
 const int ldrIn = A0;       // ldr input
+const int ledIn = 8;        // the led for the ldr
 
 // an object controlling the lidar sensor
 Adafruit_VL6180X lidar;
@@ -57,6 +58,7 @@ void setup() {
   pinMode(echoRight, INPUT);
   pinMode(trigRight, OUTPUT);
   pinMode(ldrIn, INPUT);
+  pinMode(ledIn, OUTPUT);
   // initialize the accelerometer
   accel.setI2CAddr(0x1C);
   accel.dataMode(true, 2);
@@ -298,10 +300,14 @@ void loop() {
   } else if(phase == 2 && millis() - timer > 60000) {
     // when 60 seconds have elapsed, stop the motors and stop the program
     stop();
+    // turn off led
+    digitalWrite(ledIn, LOW);
     phase = 3;
     timer = millis();
   } else if(phase == 2)  {
     // while the program is running
+    // turn on the led
+    digitalWrite(ledIn, HIGH);
     // sense the distances using ultrasonic sensors
     float distLeft, distRight;
     senseDists(&distLeft, &distRight);
