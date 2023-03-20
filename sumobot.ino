@@ -117,7 +117,7 @@ void resetLidar() {
 }
 
 float senseAccel() {
-  static int window[15] = {0};
+  static int window[16] = {0};
   static int pointer = 0;
   static int sum = 0;
   accel.update();
@@ -127,12 +127,12 @@ float senseAccel() {
   sum -= window[pointer];
   window[pointer] = output;
   sum += window[pointer];
-  pointer = (pointer + 1) % 15;
-  return sum / 15.0;
+  pointer = (pointer + 1) % 16;
+  return sum / 16.0;
 }
 
 void resetAccel() {
-  for(int i = 0; i < 5; ++i) {
+  for(int i = 0; i < 16; ++i) {
     senseAccel();
   }
 }
