@@ -23,23 +23,27 @@ const int trigRight = 7;    // right ultrasonic sensor trigger
 const int ldrIn = A0;       // ldr input
 const int ledIn = 8;        // the led for the ldr
 
+const int led2Out = 9;
+
 // an object controlling the lidar sensor
 Adafruit_VL6180X lidar;
 
 // an object controlling the accelerometer
 MMA8453_n0m1 accel;
 
-const int LEFT_SPEED_FWD = 160;     // speed of left motor going forward
-const int RIGHT_SPEED_FWD = 96;     // speed of right motor going forward
+const int LEFT_SPEED_FWD = 100; //160;     // speed of left motor going forward
+const int RIGHT_SPEED_FWD = 70; //96;     // speed of right motor going forward
 
-const int LEFT_SPEED_BWD = 160;     // speed of left motor going backward
-const int RIGHT_SPEED_BWD = 80;     // speed of right motor going backward
+const int LEFT_SPEED_BWD = 100;//160;     // speed of left motor going backward
+const int RIGHT_SPEED_BWD = 60;//80;     // speed of right motor going backward
 
-const int LEFT_SPEED_TURN = 160;    // speed of left motor turning
-const int RIGHT_SPEED_TURN = 160;   // speed of right motor turning
+const int LEFT_SPEED_TURN = 100;//160;    // speed of left motor turning
+const int RIGHT_SPEED_TURN = 100;//160;   // speed of right motor turning
 
-const int LEFT_SPEED_BUMP = 80;     // speed of left motor turning when being bumped
-const int RIGHT_SPEED_BUMP = 80;    // speed of right motor turning when being bumpeed
+const int LEFT_SPEED_BUMP = 50;//80;     // speed of left motor turning when being bumped
+const int RIGHT_SPEED_BUMP = 50;//80;    // speed of right motor turning when being bumpeed
+
+// left turn and move ()
 
 const int ACCEL_N = 4;      // the number of steps to slow down the motor by
 
@@ -59,6 +63,7 @@ void setup() {
   pinMode(trigRight, OUTPUT);
   pinMode(ldrIn, INPUT);
   pinMode(ledIn, OUTPUT);
+  pinMode(led2Out, OUTPUT);
   // initialize the accelerometer
   accel.setI2CAddr(0x1C);
   accel.dataMode(true, 2);
@@ -87,6 +92,8 @@ void senseDists(float* left, float* right) {
   digitalWrite(trigLeft, HIGH);
   delayMicroseconds(10);
   digitalWrite(trigLeft, LOW);
+  *left = 0.017 * pulseIn(echoLeft, HIGH);
+  /*
   // convert measurement to cm
   float output1 = 0.017 * pulseIn(echoLeft, HIGH);
   // add it to the rolling average
@@ -97,10 +104,13 @@ void senseDists(float* left, float* right) {
   leftPointer = (leftPointer + 1) % 5;
   // store the average in the output variable
   *left = leftSum / 5.0;
+  */
   // take measurement from right sensor
   digitalWrite(trigRight, HIGH);
   delayMicroseconds(10);
   digitalWrite(trigRight, LOW);
+  *right = 0.017 * pulseIn(echoRight, HIGH);
+  /*
   // convert measurement to cm
   float output2 = 0.017 * pulseIn(echoRight, HIGH);
   // add it to the rolling average
@@ -110,6 +120,7 @@ void senseDists(float* left, float* right) {
   rightPointer = (rightPointer + 1) % 5;
   // store the average in the output variable
   *right = rightSum / 5.0;
+  */
 }
 
 // resets the past measurements for the ultrasonic sensors
@@ -266,6 +277,14 @@ void turnRight() {
   changeSpeed(LEFT_SPEED_TURN, HIGH, RIGHT_SPEED_TURN, LOW);
 }
 
+void turnMoveLeft() {
+  changeSpeed(LEFT_SPEED_TURN, HIGH, RIGHT_SPEED_FWD, HIGH);
+}
+
+void turnMoveRight() {
+  changeSpeed(LEFT_SPEED_FWD, HIGH, RIGHT_SPEED_TURN, HIGH);
+}
+
 // make the sumobot turn left when it's getting pushed from the right
 void turnLeftBump() {
   changeSpeed(LEFT_SPEED_TURN, LOW, RIGHT_SPEED_BUMP, HIGH);
@@ -285,6 +304,7 @@ void loop() {
   // phase 2 -> run the program for 60 s
   // phase 3 -> the SumoBot is turned off
   static int phase = 0;
+  static int status = -1;
   if(phase == 0) {
     // change the phase to 1 at the start of the program
     phase = 1;
@@ -311,51 +331,58 @@ void loop() {
     // sense the distances using ultrasonic sensors
     float distLeft, distRight;
     senseDists(&distLeft, &distRight);
-    //Serial.print(distLeft);
-    //Serial.print(" ");
-    //Serial.println(distRight);
+    Serial.print(distLeft);
+    Serial.print(" ");
+    Serial.println(distRight);
     // take readings from LDR, lidar, and accelerometer
     float ldrOut = senseLDR();
     float lidarOut = senseLidar();
     float accelX = senseAccel();
-    Serial.println(lidarOut);
+    //Serial.println(lidarOut);
+    int turnLedOn = 0;
     if(ldrOut > 4.7875) {
       // sensed edge in front, go back
       Serial.println(0);
-      moveBackward();
-    } else if(lidarOut > 52.00) {
+      if(status != 0) moveBackward();
+      status = 0;
+    } else if(lidarOut > 55.00) {
       // sensed edge behind, go forward
       Serial.println(1);
-      moveForward();
-    } else if(distLeft < 100.0 && distRight < 100.0) {
+      if(status != 1) moveForward();
+      status = 1;
+    } else if(distLeft < 60.0 && distRight < 60.0) {
       // detected enemy straight ahead
+      turnLedOn = 1;
       Serial.println(2);
-      moveForward();
-    } else if(distLeft < 100.0) {
+      if(status != 2) moveForward();
+      status = 2;
+    } else if(distLeft < 60.0) {
       // detected enemy to the left
+      turnLedOn = 1;
       Serial.println(3);
-      turnLeft();
-    } else if(distRight < 100.0) {
+      if(status != 3) turnMoveLeft();
+      status = 3;
+    } else if(distRight < 60.0) {
       // detected enemy to the right
+      turnLedOn = 1;
       Serial.println(4);
-      turnRight();
-    } else if(lidarOut < 46.00) {
+      if(status != 4) turnMoveRight();
+      status = 4;
+    } else if(lidarOut < 30.00) {
       // detected enemy behind
       Serial.println(5);
-      moveBackward();
-    } else if(accelX > 75.0) {
-      // detected enemy pushing from right
-      Serial.println(6);
-      turnLeftBump();
-    } else if(accelX < -75.0) {
-      // detected enemy pushing from left
-      Serial.println(7);
-      turnRightBump();
+      if(status != 5) moveBackward();
+      status = 5;
     } else {
       // try to hunt for an enemy arbitrarily
-      Serial.println(8);
-      turnLeft();
+      Serial.println(6);
+      if(status != 6) turnLeft();
+      status = 6;
     }
-    delay(10);
+    if(turnLedOn) {
+      digitalWrite(led2Out, HIGH);
+    } else {
+      digitalWrite(led2Out, LOW);
+    }
   }
 }
