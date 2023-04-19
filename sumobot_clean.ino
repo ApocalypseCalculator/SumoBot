@@ -26,16 +26,13 @@ const int led2Out = 9;
 Adafruit_VL6180X lidar;
 
 const int LEFT_SPEED_FWD = 100; // 160;     // speed of left motor going forward
-const int RIGHT_SPEED_FWD = 70; // 96;     // speed of right motor going forward
+const int RIGHT_SPEED_FWD = 100; // 96;     // speed of right motor going forward
 
 const int LEFT_SPEED_BWD = 150; // 160;     // speed of left motor going backward
-const int RIGHT_SPEED_BWD = 80; // 80;     // speed of right motor going backward
+const int RIGHT_SPEED_BWD = 150; // 80;     // speed of right motor going backward
 
-const int LEFT_SPEED_TURN = 100;  // 160;    // speed of left motor turning
-const int RIGHT_SPEED_TURN = 100; // 160;   // speed of right motor turning
-
-const int LEFT_SPEED_BUMP = 50;  // 80;     // speed of left motor turning when being bumped
-const int RIGHT_SPEED_BUMP = 50; // 80;    // speed of right motor turning when being bumpeed
+const int LEFT_SPEED_TURN = 120;  // 160;    // speed of left motor turning
+const int RIGHT_SPEED_TURN = 120; // 160;   // speed of right motor turning
 
 // left turn and move ()
 
@@ -186,18 +183,6 @@ void turnMoveLeft()
 void turnMoveRight()
 {
     changeSpeed(LEFT_SPEED_FWD, HIGH, RIGHT_SPEED_TURN / 2, HIGH);
-}
-
-// make the sumobot turn left when it's getting pushed from the right
-void turnLeftBump()
-{
-    changeSpeed(LEFT_SPEED_TURN, LOW, RIGHT_SPEED_BUMP, HIGH);
-}
-
-// make the sumobot turn right when it's getting pushed form the left
-void turnRightBump()
-{
-    changeSpeed(LEFT_SPEED_BUMP, HIGH, RIGHT_SPEED_TURN, LOW);
 }
 
 // the main loop of the program
